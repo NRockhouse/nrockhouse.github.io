@@ -19,22 +19,47 @@
 </head>
 <body>
 
-    <div id = "container" class = "container">
+    <div id="buttons"><span>Change designs: </span></div>
+
+    <div id="container" class = "container">
         <canvas id = "canvas_background" width = "1000" height = "1000"></canvas>
         <canvas id = "canvas_foreground" width = "1000" height = "1000"></canvas>
     </div>
 
     <script>
-        const X_PIXELS=20	
-        const Y_PIXELS=20
-        const X_OFFSET=200	
-        const Y_OFFSET=100
+        var designs = {
+                verticalflag: {
+                    name: 'Vertical Flag (New)',
+                    url: 'https://cdn.discordapp.com/attachments/1131555428250177617/1131847936955912213/New_Piskel_2.png',
+                    x: 186,
+                    y: -267
+                },
+                original: {
+                    name: 'Old Design',
+                    url: 'https://cdn.discordapp.com/attachments/1131555428250177617/1131613213520302121/New_Piskel_1.png',
+                    x: 345,
+                    y: -174
+                }
+            },
+            design = designs[new URL(location).searchParams.get('design') || 'verticalflag'];
 
-        const X_IN_PLACE=345
-        const Y_IN_PLACE=-174
+        var X_PIXELS = 20;
+        var Y_PIXELS = 20;
+        var X_OFFSET = 200;	
+        var Y_OFFSET = 100;
+
+        var X_IN_PLACE = design.x;
+        var Y_IN_PLACE = design.y;
+
+        Object.keys(designs).forEach(function (key) {
+            var button = document.createElement('button');
+            button.onclick = function() { location.replace('?design=' + key); };
+            button.innerText = designs[key].name;
+            document.getElementById('buttons').appendChild(button);
+        });
 
         function getMousePos(canvas, evt) {
-            const rect = canvas.getBoundingClientRect();
+            var rect = canvas.getBoundingClientRect();
             return {
                 x: (evt.clientX - rect.left - 20) / (rect.right - rect.left) * canvas.width,
                 y: (evt.clientY - rect.top) / (rect.bottom - rect.top) * canvas.height
@@ -54,13 +79,13 @@
             ctx.stroke();
         }
 
-        const background = document.getElementById("canvas_background");
-        const bg = background.getContext("2d");
+        var background = document.getElementById("canvas_background");
+        var bg = background.getContext("2d");
 
-        const  foreground = document.getElementById("canvas_foreground");
-        const fg = foreground.getContext("2d");
+        var  foreground = document.getElementById("canvas_foreground");
+        var fg = foreground.getContext("2d");
 
-        const img = new Image();
+        var img = new Image();
         img.onload = function(){
             w = img.width * X_PIXELS
             h = img.height * Y_PIXELS
@@ -74,7 +99,7 @@
             bg.drawImage(img, 0, 0, img.width, img.height, 0, Y_OFFSET, w, h)
             drawGrid(0, Y_OFFSET, w, h + Y_OFFSET, bg)
         };
-        img.src = 'https://cdn.discordapp.com/attachments/1131555428250177617/1131613213520302121/New_Piskel_1.png';
+        img.src = design.url;
           function drawText(text, x, y){
             fg.font = '80px Sans-serif';
             fg.strokeStyle = 'black';
